@@ -1,0 +1,150 @@
+ /* Base Styling */
+        :root {
+            --dark-bg: #121212;
+            --card-bg: #1f1f1f;
+            --primary-color: #007bff; /* Blue */
+            --accent-color: #ffc107; /* Gold/Yellow */
+            --text-light: #e0e0e0;
+            --text-dark: #a0a0a0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 40px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        #team {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin: 0;
+            color: var(--accent-color);
+            text-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+        }
+
+        #year {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .coach-info {
+            display: inline-block;
+            background-color: var(--card-bg);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            border: 1px solid var(--text-dark);
+        }
+
+        /* Filter Styling */
+        .filter-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .filter-control label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        #position-filter {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #position-filter:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+        }
+
+        /* Player Cards Grid */
+        #player-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .player-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            border-left: 5px solid var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+            border-left-color: var(--accent-color);
+        }
+
+        .player-card h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+        }
+
+        .player-card p {
+            font-size: 1.1rem;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .captain {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-left: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background-color: rgba(255, 193, 7, 0.2);
+        }
+
+        /* Responsive Adjustments (Mobile first) */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            #team {
+                font-size: 2.5rem;
+            }
+            .filter-control {
+                flex-direction: column;
+            }
+            .filter-control label {
+                margin-bottom: 10px;
+            }
+        }

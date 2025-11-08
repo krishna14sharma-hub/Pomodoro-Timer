@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Team Cards</title>
+    <style>
+        /* Base Styling */
+        :root {
+            --dark-bg: #1e1e1e;
+            --card-bg: #2a2a2a;
+            --primary-color: #007bff; /* Blue */
+            --accent-color: #ffc107; /* Gold/Yellow */
+            --text-light: #f0f0f0;
+            --text-dark: #b0b0b0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 40px;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        #team {
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--primary-color);
+            text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        #year {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .coach-info {
+            display: inline-block;
+            background-color: var(--card-bg);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            border: 1px solid var(--text-dark);
+        }
+
+        /* Filter Styling */
+        .filter-control {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .filter-control label {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-right: 15px;
+            color: var(--accent-color);
+        }
+
+        #position-filter {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 2px solid var(--primary-color);
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #position-filter:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* Player Cards Grid */
+        #player-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .player-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            border: 1px solid #333;
+            transition: transform 0.2s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        .player-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+
+        .player-card p {
+            font-size: 1rem;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            #team {
+                font-size: 2rem;
+            }
+            .filter-control {
+                flex-direction: column;
+            }
+            .filter-control label {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Header Section: Team Info -->
+        <header>
+            <h1 id="team"></h1>
+            <p id="year"></p>
+            <div class="coach-info">
+                Head Coach: <span id="head-coach"></span>
+            </div>
+        </header>
+
+        <main>
+            <!-- Filter Dropdown -->
+            <div class="filter-control">
+                <label for="position-filter">Filter by Position:</label>
+                <select id="position-filter">
+                    <option value="All Players">All Players</option>
+                    <option value="forward">Forward</option>
+                    <option value="midfielder">Midfielder</option>
+                    <option value="defender">Defender</option>
+                    <option value="goalkeeper">Goalkeeper</option>
+                </select>
+            </div>
+
+            <!-- Player Cards Container -->
+            <div id="player-cards">
+                <!-- Player cards are dynamically inserted here -->
+            </div>
+        </main>
+        
+    </div>
+
+    <script>
+        // Define the footballTeam object as required by the user stories.
+        const footballTeam = {
+            team: "The Gemini Dragons FC",
+            year: 2025,
+            headCoach: "Coach Dynamo",
+            players: [
+                { name: "Kira Sol", position: "goalkeeper", isCaptain: false },
+                { name: "Ryu Jin", position: "defender", isCaptain: true }, // Captain
+                { name: "Mia Chen", position: "midfielder", isCaptain: false },
+                { name: "Zane O'Connell", position: "forward", isCaptain: false },
+                { name: "Leo Santos", position: "midfielder", isCaptain: false },
+                { name: "Ava Sharma", position: "defender", isCaptain: false },
+                { name: "Jaxon Vega", position: "forward", isCaptain: false }
+            ]
+        };
+
+        /**
+         * Renders the team metadata (headCoach, team, year) into the respective elements (Test 10).
+         */
+        const renderTeamMetadata = () => {
+            document.getElementById('head-coach').textContent = footballTeam.headCoach;
+            document.getElementById('team').textContent = footballTeam.team;
+            document.getElementById('year').textContent = footballTeam.year;
+        };
+
+        /**
+         * Renders player cards based on the selected position filter (Tests 11-15).
+         * @param {string} positionFilter - The position to filter by, or "All Players".
+         */
+        const renderPlayerCards = (positionFilter) => {
+            const container = document.getElementById('player-cards');
+            container.innerHTML = ''; // Clear previous cards
+
+            // Filter players based on the selection
+            const filteredPlayers = footballTeam.players.filter(player => 
+                positionFilter === 'All Players' || player.position === positionFilter
+            );
+
+            // Generate HTML for each player card
+            filteredPlayers.forEach(player => {
+                // Ensure (Captain) text is present if isCaptain is true, and precedes the name.
+                const isCaptainText = player.isCaptain ? '(Captain) ' : '';
+                
+                const cardDiv = document.createElement('div');
+                cardDiv.classList.add('player-card');
+
+                // This structure strictly adheres to the required output format:
+                // <div class="player-card"><h2>(Captain) Player Name</h2><p>Position: position</p></div>
+                cardDiv.innerHTML = `
+                    <h2>${isCaptainText}${player.name}</h2>
+                    <p>Position: ${player.position}</p>
+                `;
+
+                container.appendChild(cardDiv);
+            });
+        };
+
+        /**
+         * Initializes the application: renders data and sets up event listeners.
+         */
+        const initializeApp = () => {
+            // 1. Render static team data (Test 10)
+            renderTeamMetadata();
+
+            // 2. Initial render with 'All Players' (Test 11)
+            renderPlayerCards('All Players');
+
+            // 3. Set up the filter event listener
+            const filterDropdown = document.getElementById('position-filter');
+            filterDropdown.addEventListener('change', (event) => {
+                renderPlayerCards(event.target.value);
+            });
+        };
+
+        // Run initialization when the window loads
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
