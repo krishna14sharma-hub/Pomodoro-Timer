@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro & Checklist App</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+        }
+    </style>
+    <script>
+        // Tailwind Configuration
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'container-bg': '#333333',
+                        'dark-gray': '#222222',
+                        'accent-red': '#ef4444',
+                        'accent-green': '#10b981',
+                        'accent-yellow': '#f59e0b',
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Phosphor Icons for simple symbols -->
+    <script src="https://unpkg.com/phosphor-icons"></script>
+</head>
+<body class="min-h-screen">
+
+    <!-- Navigation Bar (Checkpoint 2: Current Time) -->
+    <nav class="sticky top-0 z-50 bg-container-bg shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <div class="flex items-center space-x-6">
+                <h1 class="text-xl font-bold text-white tracking-widest">
+                    <i class="ph-alarm-fill text-accent-red"></i> FocusFlow
+                </h1>
+                
+                <div class="hidden sm:flex space-x-4 navigation-bar">
+                    <a href="#pomodoro-section" class="workspace text-white hover:text-accent-red transition duration-300 px-3 py-2 rounded-md font-medium">Pomodoro Timer</a>
+                    <a href="#checklist-section" class="workspace text-white hover:text-accent-green transition duration-300 px-3 py-2 rounded-md font-medium">Work Space</a>
+                </div>
+            </div>
+
+            <!-- Current Time Element (Checkpoint 2) -->
+            <p id="current-time" class="text-lg font-mono text-gray-300 bg-dark-gray p-1.5 rounded-lg shadow-inner">
+                00:00:00 AM
+            </p>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper (Checkpoint 3: Responsive Layout) -->
+    <main id="wrapper-container" class="max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Container 1: Pomodoro Timer (Checkpoint 4 - Part 1) -->
+        <div id="pomodoro-section" class="container-1 p-8 rounded-xl bg-container-bg shadow-2xl transition duration-500 hover:shadow-indigo-600/50">
+            <h2 class="text-3xl font-extrabold mb-4 text-accent-red border-b border-accent-red pb-2 text-center">Pomodoro Timer</h2>
+
+            <!-- Timer Display -->
+            <p id="timer" class="timer text-8xl font-mono text-white text-center my-8 select-none">25:00</p>
+            
+            <!-- Time Increasing Buttons (Minimal Look) -->
+            <div class="increaseing-button flex justify-center space-x-4 mb-6" id="time-increments">
+                <button data-minutes="25" class="time-btn bg-dark-gray hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 active:scale-[.98] border border-gray-600 shadow-md">+25 min</button>
+                <button data-minutes="10" class="time-btn bg-dark-gray hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 active:scale-[.98] border border-gray-600 shadow-md">+10 min</button>
+                <button data-minutes="5" class="time-btn bg-dark-gray hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 active:scale-[.98] border border-gray-600 shadow-md">+5 min</button>
+            </div>
+            
+            <!-- Control Buttons (Start initially visible) -->
+            <div class="button-wrapper flex justify-center space-x-4">
+                <button id="start" class="control-btn bg-accent-green hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition duration-300 shadow-lg active:scale-[.98] w-32">Start</button>
+                <button id="stop" class="control-btn bg-accent-yellow hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg transition duration-300 shadow-lg active:scale-[.98] w-32 hidden">Stop</button>
+                <button id="reset" class="control-btn bg-accent-red hover:bg-red-600 text-white font-bold py-3 px-8 rounded-lg transition duration-300 shadow-lg active:scale-[.98] w-32 hidden">Reset</button>
+            </div>
+        </div>
+
+        <!-- Container 2: To-Do Checklist (Checkpoint 4 - Part 2) -->
+        <div id="checklist-section" class="container-2 p-8 rounded-xl bg-container-bg shadow-2xl transition duration-500 hover:shadow-emerald-600/50">
+            
+            <!-- Checklist Mini-Navbar -->
+            <div class="flex justify-between items-center mb-6 border-b border-gray-600 pb-3">                
+                <!-- Status Buttons (Left Side) -->
+                <div class="flex items-center space-x-6">
+                    <!-- Completed Checkbox -->
+                    <button id="completed-btn" class="flex items-center space-x-2 text-white font-medium hover:text-accent-green transition duration-300">
+                        <span id="completed-checkbox" class="w-5 h-5 border-2 border-gray-400 rounded flex items-center justify-center transition duration-200">
+                             <i class="ph-check text-white opacity-0"></i>
+                        </span>
+                        <span>Completed (0)</span>
+                    </button>
+                    
+                    <!-- Pending Button (Highlighted if pending) -->
+                    <button id="pending-btn" class="text-accent-yellow font-medium border-b-2 border-accent-yellow pb-1 transition duration-300">
+                        Pending (0)
+                    </button>
+                </div>
+                
+                <!-- Daily Date Tag (Right Side) -->
+                <span id="daily-date" class="text-sm font-mono text-gray-400 bg-dark-gray p-1.5 rounded-lg"></span>
+            </div>
+            
+            <h2 class="text-3xl font-extrabold mb-4 text-accent-green text-center">Work Space</h2>
+
+            <!-- Task List Container -->
+            <div id="task-list" class="space-y-3 min-h-[300px] mt-6">
+                <!-- Tasks will be injected here -->
+            </div>
+
+            <!-- "Add a new task" Button (Clickable center line) -->
+            <div class="mt-8 text-center">
+                <button id="add-task-btn" class="text-gray-400 hover:text-accent-green transition duration-300 text-lg border-b border-dashed border-gray-700 pb-1 px-4 cursor-pointer">
+                    <i class="ph-plus-circle-fill mr-2"></i> Add a new task
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Application Logic (OOP Structure) -->
+    <script>
+        // --- Helper Function for Formatting Time ---
+        function formatTime(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        /**
+         * Class: PomodoroTimer
+         * Handles all logic for the Pomodoro clock.
+         */
+        class PomodoroTimer {
+            constructor(initialTimeSeconds, displayElementId, startBtnId, stopBtnId, resetBtnId, incrementBtnClass) {
+                this.initialTime = initialTimeSeconds;
+                this.timeRemaining = initialTimeSeconds;
+                this.timerInterval = null;
+                this.isRunning = false;
+
+                this.display = document.getElementById(displayElementId);
+                this.startBtn = document.getElementById(startBtnId);
+                this.stopBtn = document.getElementById(stopBtnId);
+                this.resetBtn = document.getElementById(resetBtnId);
+                this.incrementBtns = document.querySelectorAll(`.${incrementBtnClass}`);
+
+                this.bindEvents();
+                this.updateDisplay();
+                this.updateControlButtons(false);
+            }
+
+            bindEvents() {
+                this.startBtn.addEventListener('click', this.start.bind(this));
+                this.stopBtn.addEventListener('click', this.stop.bind(this));
+                this.resetBtn.addEventListener('click', this.reset.bind(this));
+                this.incrementBtns.forEach(btn => btn.addEventListener('click', this.incrementTime.bind(this)));
+            }
+
+            updateControlButtons(running) {
+                this.isRunning = running;
+                
+                if (running) {
+                    this.startBtn.classList.add('hidden');
+                    this.stopBtn.classList.remove('hidden');
+                    this.resetBtn.classList.remove('hidden');
+                    document.getElementById('time-increments').classList.add('opacity-50', 'pointer-events-none');
+                } else {
+                    this.startBtn.classList.remove('hidden');
+                    this.stopBtn.classList.add('hidden');
+                    // Reset should remain visible after pausing or if time is running
+                    if (this.timeRemaining === this.initialTime && this.timeRemaining === 1500) { // Check if it's the absolute default (25:00)
+                         this.resetBtn.classList.add('hidden');
+                    }
+                    document.getElementById('time-increments').classList.remove('opacity-50', 'pointer-events-none');
+                }
+            }
+
+            updateDisplay() {
+                this.display.textContent = formatTime(this.timeRemaining);
+            }
+
+            decrementTime() {
+                if (this.timeRemaining > 0) {
+                    this.timeRemaining--;
+                    this.updateDisplay();
+                } else {
+                    this.stop();
+                    // Simple notification (since alert() is forbidden)
+                    this.display.textContent = "DONE!";
+                    this.display.classList.add('text-accent-yellow', 'animate-pulse');
+                    setTimeout(() => {
+                        this.reset();
+                        this.display.classList.remove('text-accent-yellow', 'animate-pulse');
+                    }, 3000);
+                }
+            }
+
+            start() {
+                if (!this.isRunning) {
+                    this.updateControlButtons(true);
+                    this.timerInterval = setInterval(this.decrementTime.bind(this), 1000);
+                }
+            }
+
+            stop() {
+                if (this.isRunning) {
+                    clearInterval(this.timerInterval);
+                    this.updateControlButtons(false);
+                }
+            }
+
+            reset() {
+                this.stop();
+                this.timeRemaining = this.initialTime;
+                this.updateDisplay();
+                this.updateControlButtons(false); // Hide stop/reset buttons if resetting to initial
+            }
+            
+            incrementTime(event) {
+                if (this.isRunning) return; // Cannot change time while running
+                
+                const minutes = parseInt(event.target.dataset.minutes);
+                const secondsToAdd = minutes * 60;
+                
+                // If it's the first time changing from default 25:00
+                if (this.timeRemaining === 1500 && minutes !== 25) {
+                    this.timeRemaining = secondsToAdd; // Start new time
+                    this.initialTime = secondsToAdd;
+                } else {
+                    this.timeRemaining += secondsToAdd;
+                    this.initialTime = this.timeRemaining; // Update initial time for reset
+                }
+                
+                this.updateDisplay();
+            }
+        }
+
+        /**
+         * Class: ChecklistManager
+         * Handles task management and updates status bar.
+         */
+        class ChecklistManager {
+            constructor(listElementId, addBtnId, completedBtnId, pendingBtnId, dailyDateId) {
+                this.tasks = [];
+                this.listEl = document.getElementById(listElementId);
+                this.addBtn = document.getElementById(addBtnId);
+                this.completedBtn = document.getElementById(completedBtnId);
+                this.pendingBtn = document.getElementById(pendingBtnId);
+                this.dailyDateEl = document.getElementById(dailyDateId);
+                this.completedCheckboxEl = document.getElementById('completed-checkbox');
+
+                this.bindEvents();
+                this.displayInitialDate();
+            }
+
+            bindEvents() {
+                this.addBtn.addEventListener('click', this.addTask.bind(this));
+                // Event delegation for handling clicks on task items
+                this.listEl.addEventListener('click', (e) => {
+                    if (e.target.type === 'checkbox') {
+                        this.toggleTaskCompletion(e.target.dataset.id, e.target.checked);
+                    }
+                });
+            }
+
+            displayInitialDate() {
+                const now = new Date();
+                const options = { weekday: 'short', month: 'short', day: 'numeric' };
+                this.dailyDateEl.textContent = now.toLocaleDateString('en-US', options);
+            }
+
+            updateStatus() {
+                const total = this.tasks.length;
+                const completedCount = this.tasks.filter(t => t.completed).length;
+                const pendingCount = total - completedCount;
+                
+                // Update button texts
+                document.querySelector('#completed-btn span:last-child').textContent = `Completed (${completedCount})`;
+                document.querySelector('#pending-btn').textContent = `Pending (${pendingCount})`;
+
+                // Update "Completed" checkbox
+                if (total > 0 && completedCount === total) {
+                    this.completedCheckboxEl.classList.add('border-accent-green', 'bg-accent-green');
+                    this.completedCheckboxEl.querySelector('i').classList.remove('opacity-0');
+                    this.pendingBtn.classList.remove('text-accent-yellow', 'border-accent-yellow');
+                    this.pendingBtn.classList.add('text-gray-500', 'border-transparent');
+                } else {
+                    this.completedCheckboxEl.classList.remove('border-accent-green', 'bg-accent-green');
+                    this.completedCheckboxEl.querySelector('i').classList.add('opacity-0');
+                    this.pendingBtn.classList.add('text-accent-yellow', 'border-accent-yellow');
+                    this.pendingBtn.classList.remove('text-gray-500', 'border-transparent');
+                }
+            }
+
+            addTask() {
+                const taskId = Date.now().toString(); // Simple unique ID
+                
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task-item flex items-center bg-dark-gray p-3 rounded-lg shadow-md transition duration-200 hover:bg-gray-700';
+                taskElement.innerHTML = `
+                    <input type="checkbox" data-id="${taskId}" class="form-checkbox h-5 w-5 text-accent-green rounded border-gray-600 focus:ring-accent-green transition duration-200 cursor-pointer">
+                    <input type="text" data-id="${taskId}" placeholder="New task..." class="task-input ml-3 flex-grow bg-transparent text-white focus:outline-none placeholder-gray-500" value="">
+                    <i class="ph-trash-fill text-gray-500 hover:text-accent-red ml-4 cursor-pointer" data-id="${taskId}"></i>
+                `;
+                
+                this.listEl.prepend(taskElement); // Add to the top
+
+                // Focus on the new input field
+                const inputEl = taskElement.querySelector('.task-input');
+                inputEl.focus();
+
+                // Add event listener to save task on blur (and delete handler)
+                inputEl.addEventListener('blur', (e) => this.saveTask(taskId, e.target.value));
+                taskElement.querySelector('.ph-trash-fill').addEventListener('click', (e) => this.deleteTask(taskId));
+                
+                // Temporarily add a placeholder task to the model
+                this.tasks.unshift({ id: taskId, text: "", completed: false });
+                this.updateStatus();
+            }
+
+            saveTask(id, text) {
+                const index = this.tasks.findIndex(t => t.id === id);
+                if (index !== -1 && text.trim() !== "") {
+                    this.tasks[index].text = text.trim();
+                } else if (index !== -1 && text.trim() === "") {
+                    // If task is empty, remove it from UI and array
+                    this.deleteTask(id);
+                }
+            }
+
+            toggleTaskCompletion(id, isChecked) {
+                const index = this.tasks.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    this.tasks[index].completed = isChecked;
+                    
+                    // Add strikethrough effect to text input
+                    const inputEl = this.listEl.querySelector(`.task-input[data-id="${id}"]`);
+                    if (inputEl) {
+                        inputEl.style.textDecoration = isChecked ? 'line-through' : 'none';
+                        inputEl.style.color = isChecked ? '#9ca3af' : '#ffffff'; // light gray when done
+                    }
+                    this.updateStatus();
+                }
+            }
+
+            deleteTask(id) {
+                const index = this.tasks.findIndex(t => t.id === id);
+                if (index !== -1) {
+                    // Remove from array
+                    this.tasks.splice(index, 1);
+                    
+                    // Remove from DOM
+                    const element = this.listEl.querySelector(`.task-input[data-id="${id}"]`).closest('.task-item');
+                    if (element) {
+                        element.remove();
+                    }
+                    this.updateStatus();
+                }
+            }
+        }
+
+        /**
+         * Class: ApplicationManager
+         * Coordinates the major application components.
+         */
+        class ApplicationManager {
+            constructor() {
+                this.timerEl = document.getElementById('current-time');
+                this.timerInterval = null;
+                this.pomodoro = null;
+                this.checklist = null;
+            }
+
+            init() {
+                console.log("Application initialized. Setting up components...");
+                
+                // Initialize Pomodoro (25 minutes = 1500 seconds)
+                this.pomodoro = new PomodoroTimer(
+                    1500, 'timer', 'start', 'stop', 'reset', 'time-btn'
+                );
+                
+                // Initialize Checklist
+                this.checklist = new ChecklistManager(
+                    'task-list', 'add-task-btn', 'completed-btn', 'pending-btn', 'daily-date'
+                );
+
+                this.startCurrentTimeUpdater();
+                this.initNavigation();
+            }
+
+            initNavigation() {
+                // Ensure the workspace links scroll smoothly
+                document.querySelectorAll('.workspace').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = e.target.getAttribute('href');
+                        document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+                    });
+                });
+            }
+
+            // Checkpoint 2: Continuously update the current time
+            startCurrentTimeUpdater() {
+                const updateTime = () => {
+                    const now = new Date();
+                    const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+                    this.timerEl.textContent = now.toLocaleTimeString('en-US', options);
+                };
+                updateTime(); // Initial call
+                this.timerInterval = setInterval(updateTime, 1000);
+            }
+        }
+
+        // Initialize the application once the DOM is fully loaded
+        window.onload = () => {
+            const app = new ApplicationManager();
+            app.init();
+        };
+
+    </script>
+</body>
+</html>
